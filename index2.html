@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>Ejemplo Quintus</title>
+		<style>
+			body {
+				background-color: black;
+			}
+			canvas {
+				border-style: solid;
+				border-color: white;
+			}
+		</style>
+		<!-- importamos la libreria de Quintus -->
+		<script src='lib/quintus-all-min.js'></script>
+
+	</head>
+	<body>
+
+		<canvas id="juego" height="800" width="800">
+			Tu navegador no soporta Canvas
+		</canvas>
+		<script>
+			/*---------------------------------------------------------------------*/
+			/*----------------------- CONFIGURACION DEL FRAMEWORK -----------------*/
+
+			/* Creamos un objeto con la funcion Quintus, lo guardamos en una variable
+			 * llamada Q */
+			var Q = Quintus({
+				development : true
+			});
+
+			/* habilita los modulos para trabajar con colisiones y mapas */
+			Q.include("Sprites, Scenes, Input, 2D, Touch, UI");
+			/* pinta el juego en la caja con id=juego*/
+			Q.setup("juego");
+			/*habilitamos controles (teclado)*/
+			Q.controls();
+			/*habilitamos controles touch */
+			Q.touch();
+
+			/*-------------------- CARGAMOS IMAGENES, AUDIO Y MAPAS ------------------*/
+			Q.load("tiles_map.png, player.png, level1.tmx", function() {
+
+				/* CREAMOS UNA HOJA DE MOSAICOS*/
+				/* las hojas de mosaicos se usan para rellenar mapas */
+				Q.sheet("mosaicos", "tiles_map.png", {
+					tilew : 70,
+					tileh : 70
+				});
+
+				/* Una vez listos todos los recursos, ejecutamos la escena nivel1 */
+				Q.stageScene("nivel1");
+			});
+
+			/* ------------------- DEFINICION DEL NIVEL 1 (escena) -----------------*/
+			Q.scene("nivel1", function(stage) {
+
+				/*-------------------- INSERCION DE LOS MAPAS ----------------------*/
+
+				/* insertamos la capa de fondo */
+				var fondo = new Q.TileLayer({
+					dataAsset : 'level1.tmx',
+					layerIndex : 0,
+					/* usamos la hoja de mosaicos para rellenar el mapa*/
+					sheet : 'mosaicos',
+					/* debe de indicar el tam de cada uno de los mosaicos */
+					tileW : 70,
+					tileH : 70,
+					/* TYPE es una potencia de 2, los objetos que tengan el mismo
+					 * type chocaran entre ellos
+					 * */
+					type : Q.SPRITE_NONE
+				});
+				stage.insert(fondo);
+
+				/* insertamos la capa de colisiones */
+				var colisiones = new Q.TileLayer({
+					dataAsset : 'level1.tmx',
+					layerIndex : 1,
+					/* usamos la hoja de mosaicos para rellenar el mapa*/
+					sheet : 'mosaicos',
+					/* debe de indicar el tam de cada uno de los mosaicos */
+					tileW : 70,
+					tileH : 70
+				});
+				stage.collisionLayer(colisiones);
+
+			});
+
+		</script>
+
+	</body>
+</html>
